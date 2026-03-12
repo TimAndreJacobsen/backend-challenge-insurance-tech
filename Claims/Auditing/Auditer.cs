@@ -1,6 +1,9 @@
 ﻿namespace Claims.Auditing
 {
-    public class Auditer
+    /// <summary>
+    /// Auditer that logs claim and cover operations to SQL Server.
+    /// </summary>
+    public class Auditer : IAuditer
     {
         private readonly AuditContext _auditContext;
 
@@ -21,7 +24,7 @@
             _auditContext.Add(claimAudit);
             _auditContext.SaveChanges();
         }
-        
+
         public void AuditCover(string id, string httpRequestType)
         {
             var coverAudit = new CoverAudit()
