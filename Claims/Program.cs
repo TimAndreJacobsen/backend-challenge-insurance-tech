@@ -1,5 +1,5 @@
 using Claims.Auditing;
-using Claims.Data;
+using Claims.Persistence;
 using Claims.Services;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
@@ -44,6 +44,7 @@ builder.Services.AddDbContext<ClaimsContext>(options =>
 });
 
 builder.Services.AddScoped<IAuditer, Auditer>();
+builder.Services.AddScoped<IClaimsService, ClaimsService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
