@@ -45,6 +45,8 @@ builder.Services.AddDbContext<ClaimsContext>(options =>
 
 builder.Services.AddScoped<IAuditer, Auditer>();
 builder.Services.AddScoped<IClaimsService, ClaimsService>();
+builder.Services.AddScoped<ICoversService, CoversService>();
+builder.Services.AddSingleton<IPremiumCalculator, PremiumCalculator>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
