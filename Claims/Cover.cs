@@ -13,7 +13,7 @@ public class Cover
     [BsonElement("endDate")]
     public DateTime EndDate { get; set; }
 
-    [BsonElement("claimType")]
+    [BsonElement("coverType")]
     public CoverType Type { get; set; }
 
     [BsonElement("premium")]
