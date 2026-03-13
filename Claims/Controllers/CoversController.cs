@@ -1,3 +1,4 @@
+using Claims.DTOs;
 using Claims.Models;
 using Claims.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -24,25 +25,33 @@ public class CoversController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Cover>>> GetAsync()
+    public async Task<ActionResult<IEnumerable<CoverResponse>>> GetAsync()
     {
-        return Ok(await _coversService.GetAllAsync());
+        var covers = await _coversService.GetAllAsync();
+        return Ok(covers.Select(CoverResponse.FromEntity));
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Cover>> GetAsync(string id)
+    public async Task<ActionResult<CoverResponse>> GetAsync(string id)
     {
         var cover = await _coversService.GetByIdAsync(id);
         if (cover is null)
             return NotFound();
-        return Ok(cover);
+        return Ok(CoverResponse.FromEntity(cover));
     }
 
     [HttpPost]
-    public async Task<ActionResult<Cover>> CreateAsync(Cover cover)
+    public async Task<ActionResult<CoverResponse>> CreateAsync(CreateCoverRequest request)
     {
+        var cover = new Cover
+        {
+            Id = string.Empty,
+            StartDate = request.StartDate,
+            EndDate = request.EndDate,
+            Type = request.Type
+        };
         var created = await _coversService.CreateAsync(cover);
-        return Ok(created);
+        return Ok(CoverResponse.FromEntity(created));
     }
 
     [HttpDelete("{id}")]

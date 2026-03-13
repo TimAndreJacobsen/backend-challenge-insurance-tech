@@ -1,3 +1,4 @@
+using Claims.DTOs;
 using Claims.Models;
 using Claims.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -16,25 +17,35 @@ public class ClaimsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Claim>>> GetAsync()
+    public async Task<ActionResult<IEnumerable<ClaimResponse>>> GetAsync()
     {
-        return Ok(await _claimsService.GetAllAsync());
+        var claims = await _claimsService.GetAllAsync();
+        return Ok(claims.Select(ClaimResponse.FromEntity));
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Claim>> GetAsync(string id)
+    public async Task<ActionResult<ClaimResponse>> GetAsync(string id)
     {
         var claim = await _claimsService.GetByIdAsync(id);
         if (claim is null)
             return NotFound();
-        return Ok(claim);
+        return Ok(ClaimResponse.FromEntity(claim));
     }
 
     [HttpPost]
-    public async Task<ActionResult<Claim>> CreateAsync(Claim claim)
+    public async Task<ActionResult<ClaimResponse>> CreateAsync(CreateClaimRequest request)
     {
+        var claim = new Claim
+        {
+            Id = string.Empty,
+            CoverId = request.CoverId,
+            Created = request.Created,
+            Name = request.Name,
+            Type = request.Type,
+            DamageCost = request.DamageCost
+        };
         var created = await _claimsService.CreateAsync(claim);
-        return Ok(created);
+        return Ok(ClaimResponse.FromEntity(created));
     }
 
     [HttpDelete("{id}")]
