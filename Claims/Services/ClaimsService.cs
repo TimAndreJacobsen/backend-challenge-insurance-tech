@@ -1,4 +1,5 @@
 using Claims.Auditing;
+using Claims.Models;
 using Claims.Persistence;
 using Microsoft.EntityFrameworkCore;
 

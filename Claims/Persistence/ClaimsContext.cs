@@ -1,3 +1,4 @@
+using Claims.Models;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.EntityFrameworkCore.Extensions;
 

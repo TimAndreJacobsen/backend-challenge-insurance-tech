@@ -1,3 +1,5 @@
+using Claims.Models;
+
 namespace Claims.Services;
 
 /// <summary>
