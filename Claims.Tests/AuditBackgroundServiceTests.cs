@@ -41,7 +41,7 @@ public class AuditBackgroundServiceTests
     {
         var (service, writer, context) = Arrange();
 
-        writer.TryWrite(new AuditMessage("Claim", "claim-1", "POST", new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)));
+        writer.TryWrite(new AuditMessage(AuditEntityType.Claim, "claim-1", "POST", new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)));
         writer.Complete();
 
         await service.StartAsync(TestContext.Current.CancellationToken);
@@ -57,7 +57,7 @@ public class AuditBackgroundServiceTests
     {
         var (service, writer, context) = Arrange();
 
-        writer.TryWrite(new AuditMessage("Cover", "cover-1", "DELETE", new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)));
+        writer.TryWrite(new AuditMessage(AuditEntityType.Cover, "cover-1", "DELETE", new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)));
         writer.Complete();
 
         await service.StartAsync(TestContext.Current.CancellationToken);
@@ -73,9 +73,9 @@ public class AuditBackgroundServiceTests
     {
         var (service, writer, context) = Arrange();
 
-        writer.TryWrite(new AuditMessage("Claim", "c1", "POST", new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)));
-        writer.TryWrite(new AuditMessage("Cover", "v1", "DELETE", new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)));
-        writer.TryWrite(new AuditMessage("Claim", "c2", "DELETE", new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)));
+        writer.TryWrite(new AuditMessage(AuditEntityType.Claim, "c1", "POST", new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)));
+        writer.TryWrite(new AuditMessage(AuditEntityType.Cover, "v1", "DELETE", new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)));
+        writer.TryWrite(new AuditMessage(AuditEntityType.Claim, "c2", "DELETE", new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)));
         writer.Complete();
 
         await service.StartAsync(TestContext.Current.CancellationToken);
