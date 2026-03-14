@@ -67,7 +67,7 @@ public class CreateClaimRequestValidatorTests
     public async Task CreatedDate_BeforeCoverStart_Fails()
     {
         var validator = CreateValidator();
-        var request = ValidRequest() with { Created = new DateTime(2025, 12, 31) };
+        var request = ValidRequest() with { Created = new DateTime(2025, 12, 31, 0, 0, 0, DateTimeKind.Utc) };
         var result = await validator.ValidateAsync(request, TestContext.Current.CancellationToken);
 
         Assert.False(result.IsValid);
@@ -79,7 +79,7 @@ public class CreateClaimRequestValidatorTests
     public async Task CreatedDate_AfterCoverEnd_Fails()
     {
         var validator = CreateValidator();
-        var request = ValidRequest() with { Created = new DateTime(2027, 1, 1) };
+        var request = ValidRequest() with { Created = new DateTime(2027, 1, 1, 0, 0, 0, DateTimeKind.Utc) };
         var result = await validator.ValidateAsync(request, TestContext.Current.CancellationToken);
 
         Assert.False(result.IsValid);
@@ -91,7 +91,7 @@ public class CreateClaimRequestValidatorTests
     public async Task CreatedDate_OnCoverStartDate_Passes()
     {
         var validator = CreateValidator();
-        var request = ValidRequest() with { Created = new DateTime(2026, 1, 1) };
+        var request = ValidRequest() with { Created = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc) };
         var result = await validator.ValidateAsync(request, TestContext.Current.CancellationToken);
 
         Assert.True(result.IsValid);
@@ -101,7 +101,7 @@ public class CreateClaimRequestValidatorTests
     public async Task CreatedDate_OnCoverEndDate_Passes()
     {
         var validator = CreateValidator();
-        var request = ValidRequest() with { Created = new DateTime(2026, 12, 31) };
+        var request = ValidRequest() with { Created = new DateTime(2026, 12, 31, 0, 0, 0, DateTimeKind.Utc) };
         var result = await validator.ValidateAsync(request, TestContext.Current.CancellationToken);
 
         Assert.True(result.IsValid);
@@ -187,8 +187,8 @@ public class CreateClaimRequestValidatorTests
     private static readonly Cover ValidCover = new()
     {
         Id = ValidCoverId,
-        StartDate = new DateTime(2026, 1, 1),
-        EndDate = new DateTime(2026, 12, 31),
+        StartDate = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+        EndDate = new DateTime(2026, 12, 31, 0, 0, 0, DateTimeKind.Utc),
         Type = CoverType.Yacht,
         Premium = 10000m
     };
@@ -201,7 +201,7 @@ public class CreateClaimRequestValidatorTests
 
     private static CreateClaimRequest ValidRequest() => new(
         CoverId: ValidCoverId,
-        Created: new DateTime(2026, 6, 15),
+        Created: new DateTime(2026, 6, 15, 0, 0, 0, DateTimeKind.Utc),
         Name: "Storm damage",
         Type: ClaimType.BadWeather,
         DamageCost: 50_000m
