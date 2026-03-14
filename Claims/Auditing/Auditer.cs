@@ -1,41 +1,31 @@
-﻿namespace Claims.Auditing
+﻿using System.Threading.Channels;
+
+namespace Claims.Auditing
 {
     /// <summary>
-    /// Auditer that logs claim and cover operations to SQL Server.
+    /// Auditer that writes messages to a background channel.
     /// </summary>
     public class Auditer : IAuditer
     {
-        private readonly AuditContext _auditContext;
+        private readonly ChannelWriter<AuditMessage> _channel;
+        private readonly TimeProvider _timeProvider;
 
-        public Auditer(AuditContext auditContext)
+        public Auditer(ChannelWriter<AuditMessage> channel, TimeProvider timeProvider)
         {
-            _auditContext = auditContext;
+            _channel = channel;
+            _timeProvider = timeProvider;
         }
 
         public void AuditClaim(string id, string httpRequestType)
         {
-            var claimAudit = new ClaimAudit()
-            {
-                Created = DateTime.Now,
-                HttpRequestType = httpRequestType,
-                ClaimId = id
-            };
-
-            _auditContext.Add(claimAudit);
-            _auditContext.SaveChanges();
+            var message = new AuditMessage("Claim", id, httpRequestType, _timeProvider.GetUtcNow().UtcDateTime);
+            _channel.TryWrite(message);
         }
 
         public void AuditCover(string id, string httpRequestType)
         {
-            var coverAudit = new CoverAudit()
-            {
-                Created = DateTime.Now,
-                HttpRequestType = httpRequestType,
-                CoverId = id
-            };
-
-            _auditContext.Add(coverAudit);
-            _auditContext.SaveChanges();
+            var message = new AuditMessage("Cover", id, httpRequestType, _timeProvider.GetUtcNow().UtcDateTime);
+            _channel.TryWrite(message);
         }
     }
 }
