@@ -17,35 +17,35 @@ public class ClaimsService : IClaimsService
         _auditer = auditer;
     }
 
-    public async Task<IEnumerable<Claim>> GetAllAsync()
+    public async Task<IEnumerable<Claim>> GetAllAsync(CancellationToken ct)
     {
-        return await _context.Claims.ToListAsync();
+        return await _context.Claims.ToListAsync(ct);
     }
 
-    public async Task<Claim?> GetByIdAsync(string id)
+    public async Task<Claim?> GetByIdAsync(string id, CancellationToken ct)
     {
         return await _context.Claims
             .Where(c => c.Id == id)
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync(ct);
     }
 
-    public async Task<Claim> CreateAsync(Claim claim)
+    public async Task<Claim> CreateAsync(Claim claim, CancellationToken ct)
     {
         claim.Id = Guid.NewGuid().ToString();
         _context.Claims.Add(claim);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
         _auditer.AuditClaim(claim.Id, "POST");
         return claim;
     }
 
-    public async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string id, CancellationToken ct)
     {
         _auditer.AuditClaim(id, "DELETE");
-        var claim = await GetByIdAsync(id);
+        var claim = await GetByIdAsync(id, ct);
         if (claim is not null)
         {
             _context.Claims.Remove(claim);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(ct);
         }
     }
 }

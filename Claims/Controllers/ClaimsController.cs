@@ -17,23 +17,23 @@ public class ClaimsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ClaimResponse>>> GetAsync()
+    public async Task<ActionResult<IEnumerable<ClaimResponse>>> GetAsync(CancellationToken cancellationToken)
     {
-        var claims = await _claimsService.GetAllAsync();
+        var claims = await _claimsService.GetAllAsync(cancellationToken);
         return Ok(claims.Select(ClaimResponse.FromEntity));
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ClaimResponse>> GetAsync(string id)
+    public async Task<ActionResult<ClaimResponse>> GetAsync(string id, CancellationToken cancellationToken)
     {
-        var claim = await _claimsService.GetByIdAsync(id);
+        var claim = await _claimsService.GetByIdAsync(id, cancellationToken);
         if (claim is null)
             return NotFound();
         return Ok(ClaimResponse.FromEntity(claim));
     }
 
     [HttpPost]
-    public async Task<ActionResult<ClaimResponse>> CreateAsync(CreateClaimRequest request)
+    public async Task<ActionResult<ClaimResponse>> CreateAsync(CreateClaimRequest request, CancellationToken cancellationToken)
     {
         var claim = new Claim
         {
@@ -44,14 +44,14 @@ public class ClaimsController : ControllerBase
             Type = request.Type,
             DamageCost = request.DamageCost
         };
-        var created = await _claimsService.CreateAsync(claim);
+        var created = await _claimsService.CreateAsync(claim, cancellationToken);
         return Ok(ClaimResponse.FromEntity(created));
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAsync(string id)
+    public async Task<IActionResult> DeleteAsync(string id, CancellationToken cancellationToken)
     {
-        await _claimsService.DeleteAsync(id);
+        await _claimsService.DeleteAsync(id, cancellationToken);
         return NoContent();
     }
 }

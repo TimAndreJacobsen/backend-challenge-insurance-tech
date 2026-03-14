@@ -7,8 +7,8 @@ namespace Claims.Services;
 /// </summary>
 public interface ICoversService
 {
-    Task<IEnumerable<Cover>> GetAllAsync();
-    Task<Cover?> GetByIdAsync(string id);
-    Task<Cover> CreateAsync(Cover cover);
-    Task DeleteAsync(string id);
+    Task<IEnumerable<Cover>> GetAllAsync(CancellationToken ct = default);
+    Task<Cover?> GetByIdAsync(string id, CancellationToken ct = default);
+    Task<Cover> CreateAsync(Cover cover, CancellationToken ct = default);
+    Task DeleteAsync(string id, CancellationToken ct = default);
 }

@@ -25,23 +25,23 @@ public class CoversController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CoverResponse>>> GetAsync()
+    public async Task<ActionResult<IEnumerable<CoverResponse>>> GetAsync(CancellationToken cancellationToken)
     {
-        var covers = await _coversService.GetAllAsync();
+        var covers = await _coversService.GetAllAsync(cancellationToken);
         return Ok(covers.Select(CoverResponse.FromEntity));
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CoverResponse>> GetAsync(string id)
+    public async Task<ActionResult<CoverResponse>> GetAsync(string id, CancellationToken cancellationToken)
     {
-        var cover = await _coversService.GetByIdAsync(id);
+        var cover = await _coversService.GetByIdAsync(id, cancellationToken);
         if (cover is null)
             return NotFound();
         return Ok(CoverResponse.FromEntity(cover));
     }
 
     [HttpPost]
-    public async Task<ActionResult<CoverResponse>> CreateAsync(CreateCoverRequest request)
+    public async Task<ActionResult<CoverResponse>> CreateAsync(CreateCoverRequest request, CancellationToken cancellationToken)
     {
         var cover = new Cover
         {
@@ -50,14 +50,14 @@ public class CoversController : ControllerBase
             EndDate = request.EndDate,
             Type = request.Type
         };
-        var created = await _coversService.CreateAsync(cover);
+        var created = await _coversService.CreateAsync(cover, cancellationToken);
         return Ok(CoverResponse.FromEntity(created));
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAsync(string id)
+    public async Task<IActionResult> DeleteAsync(string id, CancellationToken cancellationToken)
     {
-        await _coversService.DeleteAsync(id);
+        await _coversService.DeleteAsync(id, cancellationToken);
         return NoContent();
     }
 }

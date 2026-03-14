@@ -19,36 +19,36 @@ public class CoversService : ICoversService
         _premiumCalculator = premiumCalculator;
     }
 
-    public async Task<IEnumerable<Cover>> GetAllAsync()
+    public async Task<IEnumerable<Cover>> GetAllAsync(CancellationToken ct)
     {
-        return await _context.Covers.ToListAsync();
+        return await _context.Covers.ToListAsync(ct);
     }
 
-    public async Task<Cover?> GetByIdAsync(string id)
+    public async Task<Cover?> GetByIdAsync(string id, CancellationToken ct)
     {
         return await _context.Covers
             .Where(c => c.Id == id)
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync(ct);
     }
 
-    public async Task<Cover> CreateAsync(Cover cover)
+    public async Task<Cover> CreateAsync(Cover cover, CancellationToken ct)
     {
         cover.Id = Guid.NewGuid().ToString();
         cover.Premium = _premiumCalculator.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
         _context.Covers.Add(cover);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
         _auditer.AuditCover(cover.Id, "POST");
         return cover;
     }
 
-    public async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string id, CancellationToken ct)
     {
         _auditer.AuditCover(id, "DELETE");
-        var cover = await GetByIdAsync(id);
+        var cover = await GetByIdAsync(id, ct);
         if (cover is not null)
         {
             _context.Covers.Remove(cover);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(ct);
         }
     }
 }

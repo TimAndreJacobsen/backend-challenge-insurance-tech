@@ -7,8 +7,8 @@ namespace Claims.Services;
 /// </summary>
 public interface IClaimsService
 {
-    Task<IEnumerable<Claim>> GetAllAsync();
-    Task<Claim?> GetByIdAsync(string id);
-    Task<Claim> CreateAsync(Claim claim);
-    Task DeleteAsync(string id);
+    Task<IEnumerable<Claim>> GetAllAsync(CancellationToken ct = default);
+    Task<Claim?> GetByIdAsync(string id, CancellationToken ct = default);
+    Task<Claim> CreateAsync(Claim claim, CancellationToken ct = default);
+    Task DeleteAsync(string id, CancellationToken ct = default);
 }
