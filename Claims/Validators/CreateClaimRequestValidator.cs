@@ -26,26 +26,18 @@ public class CreateClaimRequestValidator : AbstractValidator<CreateClaimRequest>
             .WithMessage("CoverId must be a valid GUID.");
 
         RuleFor(x => x)
-            .MustAsync(async (request, ct) =>
-            {
-                var cover = await coversService.GetByIdAsync(request.CoverId, ct);
-                return cover is not null;
-            })
-            .WithName("CoverId")
-            .WithMessage("Cover not found.")
-            .When(x => Guid.TryParse(x.CoverId, out _));
-
-        RuleFor(x => x)
-            .MustAsync(async (request, ct) =>
+            .CustomAsync(async (request, context, ct) =>
             {
                 var cover = await coversService.GetByIdAsync(request.CoverId, ct);
                 if (cover is null)
-                    return true;
+                {
+                    context.AddFailure("CoverId", "Cover not found.");
+                    return;
+                }
 
-                return request.Created >= cover.StartDate && request.Created <= cover.EndDate;
+                if (request.Created < cover.StartDate || request.Created > cover.EndDate)
+                    context.AddFailure("Created", "Created date must be within the period of the related Cover.");
             })
-            .WithName("Created")
-            .WithMessage("Created date must be within the period of the related Cover.")
             .When(x => Guid.TryParse(x.CoverId, out _));
     }
 }
