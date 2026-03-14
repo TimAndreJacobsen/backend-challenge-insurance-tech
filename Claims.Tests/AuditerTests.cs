@@ -24,7 +24,7 @@ public class AuditerTests
         auditer.AuditClaim("claim-123", "POST");
 
         Assert.True(reader.TryRead(out var message));
-        Assert.Equal("Claim", message.EntityType);
+        Assert.Equal(AuditEntityType.Claim, message.EntityType);
         Assert.Equal("claim-123", message.EntityId);
         Assert.Equal("POST", message.HttpRequestType);
         Assert.Equal(FakeUtcNow, message.Created);
@@ -38,7 +38,7 @@ public class AuditerTests
         auditer.AuditCover("cover-123", "DELETE");
 
         Assert.True(reader.TryRead(out var message));
-        Assert.Equal("Cover", message.EntityType);
+        Assert.Equal(AuditEntityType.Cover, message.EntityType);
         Assert.Equal("cover-123", message.EntityId);
         Assert.Equal("DELETE", message.HttpRequestType);
         Assert.Equal(FakeUtcNow, message.Created);

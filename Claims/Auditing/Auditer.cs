@@ -18,13 +18,13 @@ namespace Claims.Auditing
 
         public void AuditClaim(string id, string httpRequestType)
         {
-            var message = new AuditMessage("Claim", id, httpRequestType, _timeProvider.GetUtcNow().UtcDateTime);
+            var message = new AuditMessage(AuditEntityType.Claim, id, httpRequestType, _timeProvider.GetUtcNow().UtcDateTime);
             _channel.TryWrite(message);
         }
 
         public void AuditCover(string id, string httpRequestType)
         {
-            var message = new AuditMessage("Cover", id, httpRequestType, _timeProvider.GetUtcNow().UtcDateTime);
+            var message = new AuditMessage(AuditEntityType.Cover, id, httpRequestType, _timeProvider.GetUtcNow().UtcDateTime);
             _channel.TryWrite(message);
         }
     }

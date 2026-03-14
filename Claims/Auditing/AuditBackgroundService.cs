@@ -38,7 +38,7 @@ public class AuditBackgroundService : BackgroundService
 
                 switch (message.EntityType)
                 {
-                    case "Claim":
+                    case AuditEntityType.Claim:
                         context.ClaimAudits.Add(new ClaimAudit
                         {
                             ClaimId = message.EntityId,
@@ -46,7 +46,7 @@ public class AuditBackgroundService : BackgroundService
                             HttpRequestType = message.HttpRequestType
                         });
                         break;
-                    case "Cover":
+                    case AuditEntityType.Cover:
                         context.CoverAudits.Add(new CoverAudit
                         {
                             CoverId = message.EntityId,
