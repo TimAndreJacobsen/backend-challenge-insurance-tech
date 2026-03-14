@@ -1,3 +1,9 @@
 namespace Claims.Auditing;
 
-public record AuditMessage(string EntityType, string EntityId, string HttpRequestType, DateTime Created);
+public enum AuditEntityType
+{
+    Claim,
+    Cover
+}
+
+public record AuditMessage(AuditEntityType EntityType, string EntityId, string HttpRequestType, DateTime Created);
