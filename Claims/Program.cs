@@ -42,12 +42,11 @@ builder.Services
 builder.Services.AddDbContext<AuditContext>(options =>
     options.UseSqlServer(sqlContainer.GetConnectionString()));
 
+var mongoClient = new MongoClient(mongoContainer.GetConnectionString());
+var mongoDatabase = mongoClient.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
+
 builder.Services.AddDbContext<ClaimsContext>(options =>
-{
-    var client = new MongoClient(mongoContainer.GetConnectionString());
-    var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
-    options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
-});
+    options.UseMongoDB(mongoDatabase.Client, mongoDatabase.DatabaseNamespace.DatabaseName));
 
 // In-memory channel for audit messages. Needs refactoring before production for scalability and to prevent data loss.
 // See TODO's in AuditBackgroundService.cs
