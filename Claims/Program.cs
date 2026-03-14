@@ -2,6 +2,7 @@ using Claims.Auditing;
 using Claims.Infrastructure;
 using Claims.Persistence;
 using Claims.Services;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using System.Runtime.InteropServices;
@@ -28,7 +29,10 @@ await mongoContainer.StartAsync();
 
 // Add services to the container.
 builder.Services
-    .AddControllers()
+    .AddControllers(options =>
+    {
+        options.Filters.Add<Claims.Infrastructure.FluentValidationFilter>();
+    })
     .AddJsonOptions(x =>
     {
         x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -48,6 +52,9 @@ builder.Services.AddScoped<IAuditer, Auditer>();
 builder.Services.AddScoped<IClaimsService, ClaimsService>();
 builder.Services.AddScoped<ICoversService, CoversService>();
 builder.Services.AddSingleton<IPremiumCalculator, PremiumCalculator>();
+builder.Services.AddSingleton(TimeProvider.System);
+
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
