@@ -7,7 +7,7 @@ namespace Claims.Tests;
 
 public class CreateCoverRequestValidatorTests
 {
-    private static readonly DateTime Today = new(2026, 3, 14);
+    private static readonly DateTime Today = new(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc);
 
     private static CreateCoverRequestValidator CreateValidator(DateTime? today = null)
     {
