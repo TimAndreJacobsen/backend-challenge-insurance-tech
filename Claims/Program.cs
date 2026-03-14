@@ -49,6 +49,7 @@ builder.Services.AddScoped<IAuditer, Auditer>();
 builder.Services.AddScoped<IClaimsService, ClaimsService>();
 builder.Services.AddScoped<ICoversService, CoversService>();
 builder.Services.AddSingleton<IPremiumCalculator, PremiumCalculator>();
+builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
