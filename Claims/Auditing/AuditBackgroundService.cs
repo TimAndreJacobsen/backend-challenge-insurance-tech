@@ -22,7 +22,7 @@ public class AuditBackgroundService : BackgroundService
         _logger = logger;
     }
 
-    // This is a sequentional, in-memory implementation that has several major limitations that need to be addressed for production use.
+    // This is a sequential, in-memory implementation that has several major limitations that need to be addressed for production use.
     // TODO: 
     // 1. Use Azure Service Bus to avoid data loss on shutdown and enable scaling with multiple instances of the api.
     // 2. Implement retry with Polly
