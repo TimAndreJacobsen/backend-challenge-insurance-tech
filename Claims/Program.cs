@@ -29,7 +29,10 @@ await mongoContainer.StartAsync();
 
 // Add services to the container.
 builder.Services
-    .AddControllers()
+    .AddControllers(options =>
+    {
+        options.Filters.Add<Claims.Infrastructure.FluentValidationFilter>();
+    })
     .AddJsonOptions(x =>
     {
         x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

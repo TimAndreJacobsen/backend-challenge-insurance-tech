@@ -1,7 +1,6 @@
 using Claims.DTOs;
 using Claims.Models;
 using Claims.Services;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Claims.Controllers;
@@ -12,13 +11,11 @@ public class CoversController : ControllerBase
 {
     private readonly ICoversService _coversService;
     private readonly IPremiumCalculator _premiumCalculator;
-    private readonly IValidator<CreateCoverRequest> _validator;
 
-    public CoversController(ICoversService coversService, IPremiumCalculator premiumCalculator, IValidator<CreateCoverRequest> validator)
+    public CoversController(ICoversService coversService, IPremiumCalculator premiumCalculator)
     {
         _coversService = coversService;
         _premiumCalculator = premiumCalculator;
-        _validator = validator;
     }
 
     [HttpPost("compute")]
@@ -46,15 +43,6 @@ public class CoversController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CoverResponse>> CreateAsync(CreateCoverRequest request, CancellationToken cancellationToken)
     {
-        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
-        if (!validationResult.IsValid)
-        {
-            foreach (var error in validationResult.Errors)
-                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-
-            return ValidationProblem(ModelState);
-        }
-
         var cover = new Cover
         {
             Id = string.Empty,
