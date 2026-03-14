@@ -54,6 +54,14 @@ public class AuditBackgroundService : BackgroundService
                             HttpRequestType = message.HttpRequestType
                         });
                         break;
+                    default:
+                        _logger.LogWarning(
+                            "Unknown audit message entity type '{EntityType}'. EntityId={EntityId}, HttpRequestType={HttpRequestType}, Created={Created}. Message will be ignored.",
+                            message.EntityType,
+                            message.EntityId,
+                            message.HttpRequestType,
+                            message.Created);
+                        break;
                 }
 
                 await context.SaveChangesAsync(stoppingToken);
