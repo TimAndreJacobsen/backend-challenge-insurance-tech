@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
+using System.Threading.Channels;
 using Testcontainers.MongoDb;
 using Testcontainers.MsSql;
 
@@ -47,6 +48,13 @@ builder.Services.AddDbContext<ClaimsContext>(options =>
     var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]);
     options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
 });
+
+// In-memory channel for audit messages. Needs refactoring before production for scalability and to prevent data loss.
+// See TODO's in AuditBackgroundService.cs
+var auditChannel = Channel.CreateUnbounded<AuditMessage>();
+builder.Services.AddSingleton(auditChannel.Reader);
+builder.Services.AddSingleton(auditChannel.Writer);
+builder.Services.AddHostedService<AuditBackgroundService>();
 
 builder.Services.AddScoped<IAuditer, Auditer>();
 builder.Services.AddScoped<IClaimsService, ClaimsService>();
