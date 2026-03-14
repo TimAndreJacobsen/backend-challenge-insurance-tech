@@ -1,6 +1,7 @@
 using Claims.DTOs;
 using Claims.Models;
 using Claims.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Claims.Controllers;
@@ -10,10 +11,12 @@ namespace Claims.Controllers;
 public class ClaimsController : ControllerBase
 {
     private readonly IClaimsService _claimsService;
+    private readonly IValidator<CreateClaimRequest> _validator;
 
-    public ClaimsController(IClaimsService claimsService)
+    public ClaimsController(IClaimsService claimsService, IValidator<CreateClaimRequest> validator)
     {
         _claimsService = claimsService;
+        _validator = validator;
     }
 
     [HttpGet]
@@ -35,6 +38,15 @@ public class ClaimsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ClaimResponse>> CreateAsync(CreateClaimRequest request, CancellationToken cancellationToken)
     {
+        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            foreach (var error in validationResult.Errors)
+                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+
+            return ValidationProblem(ModelState);
+        }
+
         var claim = new Claim
         {
             Id = string.Empty,
