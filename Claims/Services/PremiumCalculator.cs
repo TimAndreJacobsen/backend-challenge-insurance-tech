@@ -19,7 +19,7 @@ public class PremiumCalculator : IPremiumCalculator
 
     public decimal ComputePremium(DateTime startDate, DateTime endDate, CoverType coverType)
     {
-        var totalDays = (int)(endDate - startDate).TotalDays;
+        var totalDays = (endDate.Date - startDate.Date).Days;
 
         if (totalDays > MaxCoverageDays || totalDays <= 0)
             throw new ArgumentOutOfRangeException(nameof(endDate), $"Invalid coverage period: {totalDays} days. Must be between 1 and {MaxCoverageDays} days.");

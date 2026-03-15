@@ -67,4 +67,17 @@ public class PremiumCalculatorTests
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             _calculator.ComputePremium(startDate, startDate.AddDays(-10), CoverType.Yacht));
     }
+
+    [Fact]
+    public void ComputePremium_DifferentTimesOnSameDay_ReturnsZeroDaysAndThrows()
+    {
+        // 2026-01-01 23:00 → 2026-01-02 01:00 is only 2 hours, but spans 1 calendar day
+        // Ensures we count calendar days (Date - Date), not fractional hours
+        var start = new DateTime(2026, 1, 1, 23, 0, 0, DateTimeKind.Utc);
+        var end = new DateTime(2026, 1, 2, 1, 0, 0, DateTimeKind.Utc);
+
+        var result = _calculator.ComputePremium(start, end, CoverType.Yacht);
+
+        Assert.Equal(1_375m, result); // 1 calendar day
+    }
 }
