@@ -5,36 +5,51 @@ namespace Claims.Services;
 /// <inheritdoc />
 public class PremiumCalculator : IPremiumCalculator
 {
+    private const decimal BaseDayRate = 1250m;
+    
+    private const decimal YachtTier2Discount = 0.05m;
+    private const decimal YachtTier3Discount = 0.03m;
+    private const decimal DefaultTier2Discount = 0.02m;
+    private const decimal DefaultTier3Discount = 0.01m;
+
+    private const int Tier1MaxDays = 30;
+    private const int Tier2MaxDays = 150;
+    private const int Tier3MaxDays = 185;
+    private const int MaxCoverageDays = Tier1MaxDays + Tier2MaxDays + Tier3MaxDays;
+
     public decimal ComputePremium(DateTime startDate, DateTime endDate, CoverType coverType)
     {
-        var multiplier = 1.3m;
-        if (coverType == CoverType.Yacht)
-        {
-            multiplier = 1.1m;
-        }
+        var totalDays = (int)(endDate - startDate).TotalDays;
 
-        if (coverType == CoverType.PassengerShip)
-        {
-            multiplier = 1.2m;
-        }
+        if (totalDays > MaxCoverageDays || totalDays <= 0)
+            throw new ArgumentOutOfRangeException(nameof(endDate), $"Invalid coverage period: {totalDays} days. Must be between 1 and {MaxCoverageDays} days.");
 
-        if (coverType == CoverType.Tanker)
+        var multiplier = coverType switch
         {
-            multiplier = 1.5m;
-        }
+            CoverType.Yacht => 1.1m,
+            CoverType.PassengerShip => 1.2m,
+            CoverType.Tanker => 1.5m,
+            CoverType.ContainerShip => 1.3m,
+            CoverType.BulkCarrier => 1.3m,
+            _ => throw new ArgumentOutOfRangeException(nameof(coverType), $"Unexpected cover type value: {coverType}")
+        };
 
-        var premiumPerDay = 1250 * multiplier;
-        var insuranceLength = (endDate - startDate).TotalDays;
-        var totalPremium = 0m;
-
-        for (var i = 0; i < insuranceLength; i++)
+        var (tier2Discount, tier3Discount) = coverType switch
         {
-            if (i < 30) totalPremium += premiumPerDay;
-            if (i < 180 && coverType == CoverType.Yacht) totalPremium += premiumPerDay - premiumPerDay * 0.05m;
-            else if (i < 180) totalPremium += premiumPerDay - premiumPerDay * 0.02m;
-            if (i < 365 && coverType != CoverType.Yacht) totalPremium += premiumPerDay - premiumPerDay * 0.03m;
-            else if (i < 365) totalPremium += premiumPerDay - premiumPerDay * 0.08m;
-        }
+            CoverType.Yacht => (YachtTier2Discount, YachtTier3Discount),
+            _ => (DefaultTier2Discount, DefaultTier3Discount)
+        };
+
+        var premiumPerDay = BaseDayRate * multiplier;
+
+        // Clamp min and max days for each tier
+        var tier1Days = Math.Min(totalDays, Tier1MaxDays);
+        var tier2Days = Math.Min(Math.Max(totalDays - Tier1MaxDays, 0), Tier2MaxDays);
+        var tier3Days = Math.Min(Math.Max(totalDays - (Tier1MaxDays + Tier2MaxDays), 0), Tier3MaxDays);
+        
+        var totalPremium = premiumPerDay * tier1Days 
+            + premiumPerDay * (1 - tier2Discount) * tier2Days
+            + premiumPerDay * (1 - tier2Discount - tier3Discount) * tier3Days;
 
         return totalPremium;
     }
