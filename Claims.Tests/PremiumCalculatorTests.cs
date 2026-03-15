@@ -13,7 +13,7 @@ public class PremiumCalculatorTests
      * Focus on boundaries between tiers (possible edge cases)
      * Use known good values instead of sharing config with calculator (forces tests to be updated if premiums are adjusted)
      */
-
+    
     [Theory]
     [InlineData(CoverType.Yacht, 1, 1_375)]
     [InlineData(CoverType.Yacht, 30, 41_250)]
@@ -79,5 +79,13 @@ public class PremiumCalculatorTests
         var result = _calculator.ComputePremium(start, end, CoverType.Yacht);
 
         Assert.Equal(1_375m, result);
+    }
+
+    [Fact]
+    public void ComputePremium_ZeroDays_ThrowsArgumentOutOfRange()
+    {
+        var startDate = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            _calculator.ComputePremium(startDate, startDate, CoverType.Yacht));
     }
 }
