@@ -67,6 +67,8 @@ Guard clause throws ArgumentOutOfRangeException for unexpected or invalid data. 
   - dead-letter queue
   - Polly for retries
   - Rate-limiting on the Api
+  - peeklock on service bus
+  - outbox pattern for placing items into service bus (write to db to avoid dualwrite problems)
 - Add terraform scripts for deploying to azure
 - CI/CD pipeline with test gating
 - Code scanning in pipeline with trivy or similar for security vulnerabilities in dependencies & use SNYK or GHAS.
