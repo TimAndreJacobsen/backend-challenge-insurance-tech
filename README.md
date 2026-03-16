@@ -72,4 +72,4 @@ Guard clause throws ArgumentOutOfRangeException for unexpected or invalid data. 
 - Code scanning in pipeline with trivy or similar for security vulnerabilities in dependencies & use SNYK or GHAS.
 - Health check endpoints 
 - Do a thorough investigation of DateTime and timezones. I expect this to be a rabbit hole of bugs and edge cases.
-- Authentication and Authorization ofcourse, the API is wide open :D
+- Authentication and Authorization ofcourse, the API is wide open 
