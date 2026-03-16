@@ -21,12 +21,13 @@ public class CoversService : ICoversService
 
     public async Task<IEnumerable<Cover>> GetAllAsync(CancellationToken ct)
     {
-        return await _context.Covers.ToListAsync(ct);
+        return await _context.Covers.AsNoTracking()
+            .ToListAsync(ct);
     }
 
     public async Task<Cover?> GetByIdAsync(string id, CancellationToken ct)
     {
-        return await _context.Covers
+        return await _context.Covers.AsNoTracking()
             .Where(c => c.Id == id)
             .SingleOrDefaultAsync(ct);
     }

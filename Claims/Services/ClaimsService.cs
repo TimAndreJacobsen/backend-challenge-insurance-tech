@@ -19,12 +19,13 @@ public class ClaimsService : IClaimsService
 
     public async Task<IEnumerable<Claim>> GetAllAsync(CancellationToken ct)
     {
-        return await _context.Claims.ToListAsync(ct);
+        return await _context.Claims.AsNoTracking()
+            .ToListAsync(ct);
     }
 
     public async Task<Claim?> GetByIdAsync(string id, CancellationToken ct)
     {
-        return await _context.Claims
+        return await _context.Claims.AsNoTracking()
             .Where(c => c.Id == id)
             .SingleOrDefaultAsync(ct);
     }
